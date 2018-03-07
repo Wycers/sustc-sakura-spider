@@ -109,8 +109,8 @@ hidden = form.find_all('input', type='hidden')
 execution = hidden[0].get('value')
 
 params = {
-    "username": 11711036,
-    "password": 282822,
+    "username": 'id',
+    "password": 'password',
     "_eventId": "submit",
     "geolocation": "",
     "execution": execution
@@ -118,8 +118,9 @@ params = {
 
 session.post('https://cas.sustc.edu.cn/cas/login?service=http://jwxt.sustc.edu.cn/jsxsd/framework/xsMain.jsp',
              data=params)
-t_str = '2018-02-26 12:00:00'
-base = datetime.datetime.strptime(t_str, '%Y-%m-%d %H:%M:%S')
+for i in session.cookies:
+    print()
+base = datetime.datetime.strptime('2018-02-26 12:00:00', '%Y-%m-%d %H:%M:%S')
 delta = datetime.timedelta(days=1)
 uniteSetting()
 
@@ -138,7 +139,7 @@ for i in range(1, 18):
     trs = soup.find_all(name='tr')
     row, col = 1, 0
     res = ""
-
+ 
     for tr in trs:
         soup = BeautifulSoup(str(tr), "lxml")
         tds = soup.find_all(name='td')
