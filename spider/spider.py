@@ -89,11 +89,11 @@ class Spider():
         Arguments:
             path {string} -- specify the runtime path
         """
-        file = open(os.path.join(path, 'model/calendar'))
+        file = open(os.path.join(path, 'model/calendar'), 'r')
         self.calendar_model = file.read()
         file.close()
 
-        file = open(os.path.join(path, 'model/event'))
+        file = open(os.path.join(path, 'model/event'), 'r')
         self.event_model = file.read()
         file.close()
 
@@ -141,9 +141,12 @@ class Spider():
 
     def trans(self, JSESSIONID):
         """Spider the content on teaching system and transform it to ics file
-
+        
         Arguments:
             JSESSIONID {string} -- can get from login methods. use for cookies.
+        
+        Returns:
+            integer, string -- code, filename
         """
 
         base = datetime.datetime.strptime(
