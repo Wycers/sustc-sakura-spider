@@ -99,7 +99,6 @@ class spider():
             for td in tds:
                 div = td.find('div')
                 if div != None and div.get_text().strip() != "":
-                    print(div.get_text())
                     tmp = self.between(str(div), '>', '</div>').split('<font')
                     if len(tmp) != 1:
                         date = base + delta * ((zc - 1) * 7 + col - 1)
@@ -107,7 +106,6 @@ class spider():
                         location = self.between(tmp[2], '>', '<')
                         res += self.event(date.strftime('%Y%m%d'), classname,
                                           self.time[row - 1][0], self.time[row - 1][1], location)
-                        print(classname)
                 col = col + 1
                 if (col == 8):
                     col = 1

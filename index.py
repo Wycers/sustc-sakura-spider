@@ -1,4 +1,4 @@
 from spider.spider import spider
 
 spider = spider('./spider')
-spider.trans(spider.login('11711918', '301914'))
+spider.trans(spider.login('XD', 'XD'))
