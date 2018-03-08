@@ -6,8 +6,21 @@ import os
 import os.path
 from random import Random
 import datetime
+import hashlib
 import requests
 from bs4 import BeautifulSoup
+
+
+def getMD5(string):
+    """get a string's md5 code
+
+    Arguments:
+        string {string} -- the string
+
+    Returns:
+        string -- the md5
+    """
+    return hashlib.md5(string.encode('utf-8')).hexdigest()
 
 
 def MakeString(length):
@@ -42,14 +55,14 @@ def random_str(randomlength):
     return res
 
 
-def save(string):
+def save(filename, string):
     """Save a string to class.ics
 
     Arguments:
         string {string} -- filename
     """
 
-    f = open(os.getcwd() + "/class.ics", 'wb')
+    f = open(os.path.join(os.getcwd(), 'ics',filename + ".ics"), 'wb')
     f.write(string.encode("utf-8"))
     f.close()
 
@@ -141,10 +154,10 @@ class Spider():
 
     def trans(self, JSESSIONID):
         """Spider the content on teaching system and transform it to ics file
-        
+
         Arguments:
             JSESSIONID {string} -- can get from login methods. use for cookies.
-        
+
         Returns:
             integer, string -- code, filename
         """
@@ -167,11 +180,13 @@ class Spider():
             'http://jwxt.sustc.edu.cn/jsxsd/xskb/xskb_list.do', data=params, cookies=cookies).text
         soup = BeautifulSoup(html, "lxml")
         trs = soup.find_all(name='tr')
+        if len(trs) <= 1:
+            return -3, 'invalid jsessionid'
         row, col = 1, 0
         _, zc, _ = datetime.datetime.now().isocalendar()
         zc = zc - 8
+        
         res = ""
-
         for tr in trs:
             soup = BeautifulSoup(str(tr), "lxml")
             tds = soup.find_all(name='td')
@@ -189,8 +204,8 @@ class Spider():
                 if col == 8:
                     col = 1
                     row = row + 1
-        save(self.calendar_model % res)
-        return 0, 'class.ics'
+        save(JSESSIONID, self.calendar_model % res)
+        return 0, JSESSIONID + '.ics'
 
     def event(self, date, className, startTime, endTime, location):
         """Return a string describing a lesson's information in ics format

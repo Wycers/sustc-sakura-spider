@@ -8,7 +8,7 @@ port = 9090
 
 s = socket.socket()
 s.connect((host, port))
-s.sendall(json.dumps({'action': 'login', 'username': 'username', 'password': 'password'}).encode())
+s.sendall(json.dumps({'action': 'login', 'username': '11711918', 'password': '301914'}).encode())
 JSESSIONID = json.loads(s.recv(1024).decode())['msg']
 print(JSESSIONID)
 s.close()
