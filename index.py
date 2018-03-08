@@ -78,7 +78,6 @@ def event(date, className, startTime, endTime, location):
     ACTION:DISPLAY
     END:VALARM
     END:VEVENT
-    
     """ % (DONE_CreatedTime, MakeString(20), \
         date + "T" + endTime + "00", className, \
         date + "T" + startTime + "00", DONE_CreatedTime, location, \
@@ -89,15 +88,6 @@ def event(date, className, startTime, endTime, location):
 
 def MakeString(length):
     return random_str(length) + "&Wycer"
-
-
-def uniteSetting():
-    global DONE_ALARMUID
-    DONE_ALARMUID = MakeString(30)
-
-    global DONE_UnitUID
-    DONE_UnitUID = MakeString(20)
-
 
 session = requests.Session()
 html = session.get(
@@ -118,48 +108,76 @@ params = {
 
 session.post('https://cas.sustc.edu.cn/cas/login?service=http://jwxt.sustc.edu.cn/jsxsd/framework/xsMain.jsp',
              data=params)
-for i in session.cookies:
-    print()
+try:
+    print(session.cookies['JSESSIONID'])
+except KeyError:
+    print('登录失败')
+else:
+    print('qwq')
+exit(0)
+
 base = datetime.datetime.strptime('2018-02-26 12:00:00', '%Y-%m-%d %H:%M:%S')
 delta = datetime.timedelta(days=1)
-uniteSetting()
 
-icsString = "BEGIN:VCALENDAR\nMETHOD:PUBLISH\nVERSION:2.0\nX-WR-CALNAME:课程表\nPRODID:-//Apple Inc.//Mac OS X 10.12//EN\nX-APPLE-CALENDAR-COLOR:#FC4208\nX-WR-TIMEZONE:Asia/Shanghai\nCALSCALE:GREGORIAN\nBEGIN:VTIMEZONE\nTZID:Asia/Shanghai\nBEGIN:STANDARD\nTZOFFSETFROM:+0900\nRRULE:FREQ=YEARLY;UNTIL=19910914T150000Z;BYMONTH=9;BYDAY=3SU\nDTSTART:19890917T000000\nTZNAME:GMT+8\nTZOFFSETTO:+0800\nEND:STANDARD\nBEGIN:DAYLIGHT\nTZOFFSETFROM:+0800\nDTSTART:19910414T000000\nTZNAME:GMT+8\nTZOFFSETTO:+0900\nRDATE:19910414T000000\nEND:DAYLIGHT\nEND:VTIMEZONE\n"
-for i in range(1, 18):
-    if i != 2:
-        continue
-    params = {
-        "sfFD": 1,
-        "xnxq01id": '2017-2018-2',
-        "zc": i
-    }
-    html = session.post(
-        'http://jwxt.sustc.edu.cn/jsxsd/xskb/xskb_list.do', data=params).text
-    soup = BeautifulSoup(html, "lxml")
-    trs = soup.find_all(name='tr')
-    row, col = 1, 0
-    res = ""
- 
-    for tr in trs:
-        soup = BeautifulSoup(str(tr), "lxml")
-        tds = soup.find_all(name='td')
-        for td in tds:
-            div = td.find('div')
-            if div != None and div.get_text().strip() != "":
-                print(div.get_text())
-                tmp = bet(str(div), '>', '</div>').split('<font')
-                if len(tmp) != 1:
-                    date = base + delta * ((i - 1) * 7 + col - 1)
-                    classname = bet('#' + tmp[0], '#', '<br/>')
-                    location = bet(tmp[2], '>', '<')
-                    res += event(date.strftime('%Y%m%d'), classname,
-                                 time[row - 1][0], time[row - 1][1], location)
-                    print(classname)
-            col = col + 1
-            if (col == 8):
-                col = 1
-                row = row + 1
-icsString = icsString + res + "END:VCALENDAR"
+params = {
+    "sfFD": 1,
+    "xnxq01id": '2017-2018-2',
+    "zc": i
+}
+html = session.post(
+    'http://jwxt.sustc.edu.cn/jsxsd/xskb/xskb_list.do', data=params).text
+soup = BeautifulSoup(html, "lxml")
+trs = soup.find_all(name='tr')
+row, col = 1, 0
+res = ""
+
+for tr in trs:
+    soup = BeautifulSoup(str(tr), "lxml")
+    tds = soup.find_all(name='td')
+    for td in tds:
+        div = td.find('div')
+        if div != None and div.get_text().strip() != "":
+            print(div.get_text())
+            tmp = bet(str(div), '>', '</div>').split('<font')
+            if len(tmp) != 1:
+                date = base + delta * ((i - 1) * 7 + col - 1)
+                classname = bet('#' + tmp[0], '#', '<br/>')
+                location = bet(tmp[2], '>', '<')
+                res += event(date.strftime('%Y%m%d'), classname,
+                                time[row - 1][0], time[row - 1][1], location)
+                print(classname)
+        col = col + 1
+        if (col == 8):
+            col = 1
+            row = row + 1
+icsString = """
+BEGIN:VCALENDAR
+METHOD:PUBLISH
+VERSION:2.0
+X-WR-CALNAME:课程表
+PRODID:-//Apple Inc.//Mac OS X 10.12//EN
+X-APPLE-CALENDAR-COLOR:#FC4208
+X-WR-TIMEZONE:Asia/Shanghai
+CALSCALE:GREGORIAN
+BEGIN:VTIMEZONE
+TZID:Asia/Shanghai
+BEGIN:STANDARD
+TZOFFSETFROM:+0900
+RRULE:FREQ=YEARLY;UNTIL=19910914T150000Z;BYMONTH=9;BYDAY=3SU
+DTSTART:19890917T000000
+TZNAME:GMT+8
+TZOFFSETTO:+0800
+END:STANDARD
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0800\nDTSTART:19910414T000000
+TZNAME:GMT+8
+TZOFFSETTO:+0900
+RDATE:19910414T000000
+END:DAYLIGHT
+END:VTIMEZONE
+%s
+END:VCALENDAR
+""" % res
 #save(icsString)
 #print("icsCreateAndSave")
 os.chdir(os.getcwd())
