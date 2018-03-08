@@ -5,7 +5,7 @@
 - datetime
 - requests
 - bs4
-## Application
+## Application
 - 爬取南科大教务系统的课程表信息并转存为ics文件。
 - 在电脑或手机上打开ics文件可以把课程信息快速添加进日历app
 ## Usage
