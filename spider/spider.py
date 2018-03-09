@@ -56,15 +56,21 @@ def random_str(randomlength):
 
 
 def save(filename, string):
-    """Save a string to class.ics
+    """Save a string to ics file
 
     Arguments:
-        string {string} -- filename
+        filename {string} -- filename
+        string {string} -- content
+
+    Returns:
+        string -- abspath of the file
     """
 
-    f = open(os.path.join(os.getcwd(), 'ics',filename + ".ics"), 'wb')
-    f.write(string.encode("utf-8"))
+    relative_path = os.path.join(os.getcwd(), 'ics', filename + ".ics")
+    f = open(relative_path, 'wb')
+    f.write(string.encode())
     f.close()
+    return os.path.abspath(relative_path)
 
 
 def between(string, tag1, tag2):
