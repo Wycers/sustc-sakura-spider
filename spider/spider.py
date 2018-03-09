@@ -210,8 +210,7 @@ class Spider():
                 if col == 8:
                     col = 1
                     row = row + 1
-        save(JSESSIONID, self.calendar_model % res)
-        return 0, JSESSIONID + '.ics'
+        return 0, save(JSESSIONID, self.calendar_model % res)
 
     def event(self, date, className, startTime, endTime, location):
         """Return a string describing a lesson's information in ics format
