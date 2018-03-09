@@ -191,7 +191,7 @@ class Spider():
         row, col = 1, 0
         _, zc, _ = datetime.datetime.now().isocalendar()
         zc = zc - 8
-        
+
         res = ""
         for tr in trs:
             soup = BeautifulSoup(str(tr), "lxml")
@@ -205,7 +205,7 @@ class Spider():
                         classname = between('#' + tmp[0], '#', '<br/>')
                         location = between(tmp[2], '>', '<')
                         res += self.event(date.strftime('%Y%m%d'), classname,
-                                          self.time[row - 1][0], self.time[row - 1][1], location)
+                                          self.time[row - 1][0], self.time[row - 1][1], location) + "\n"
                 col = col + 1
                 if col == 8:
                     col = 1
