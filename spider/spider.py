@@ -108,11 +108,11 @@ class Spider():
         Arguments:
             path {string} -- specify the runtime path
         """
-        file = open(os.path.join(path, 'model/calendar'), 'r')
+        file = open(os.path.join(path, 'model/calendar'), 'r', encoding="utf-8")
         self.calendar_model = file.read()
         file.close()
 
-        file = open(os.path.join(path, 'model/event'), 'r')
+        file = open(os.path.join(path, 'model/event'), 'r', encoding="utf-8")
         self.event_model = file.read()
         file.close()
 
