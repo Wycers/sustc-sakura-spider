@@ -37,10 +37,16 @@ class TCPhandler(socketserver.BaseRequestHandler):
             if action == 'trans':
                 try:
                     JSESSIONID = JSON['JSESSIONID']
+                    WEEK = JSON['week']
                 except KeyError:
                     res['code'], res['msg'] = -2, 'missing params'
                 else:
-                    res['code'], res['msg'] = spider.trans(JSESSIONID)
+                    try:
+                        week = int(WEEK)
+                    except ValueError:
+                        res['code'], res['msg'] = -3, 'value error'
+                    else:
+                        res['code'], res['msg'] = spider.trans(JSESSIONID, week)
         self.request.sendall(json.dumps(res).encode())
 
 

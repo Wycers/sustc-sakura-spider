@@ -158,11 +158,12 @@ class Spider():
             return -1, 'login failed'
         return 0, res
 
-    def trans(self, JSESSIONID):
+    def trans(self, JSESSIONID, week):
         """Spider the content on teaching system and transform it to ics file
 
         Arguments:
             JSESSIONID {string} -- can get from login methods. use for cookies.
+            week {int} -- the week you want
 
         Returns:
             integer, string -- code, filename
@@ -189,8 +190,7 @@ class Spider():
         if len(trs) <= 1:
             return -3, 'invalid jsessionid'
         row, col = 1, 0
-        _, zc, _ = datetime.datetime.now().isocalendar()
-        zc = zc - 8
+        zc = week - 8
 
         res = ""
         for tr in trs:
@@ -237,5 +237,4 @@ class Spider():
 
 
 if __name__ == '__main__':
-    spider = Spider('.')
-    spider.trans(spider.login('11711918', '301914'))
+    pass
