@@ -173,8 +173,7 @@ class Spider():
             '2018-02-26 12:00:00', '%Y-%m-%d %H:%M:%S')
         delta = datetime.timedelta(days=1)
 
-        _, zc, _ = datetime.datetime.now().isocalendar()
-        zc = zc - 8
+        zc = week
         params = {
             "sfFD": 1,
             "xnxq01id": '2017-2018-2',
@@ -189,9 +188,8 @@ class Spider():
         trs = soup.find_all(name='tr')
         if len(trs) <= 1:
             return -3, 'invalid jsessionid'
+        
         row, col = 1, 0
-        zc = week - 8
-
         res = ""
         for tr in trs:
             soup = BeautifulSoup(str(tr), "lxml")
