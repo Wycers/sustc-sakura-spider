@@ -8,6 +8,7 @@ from random import Random
 import datetime
 import hashlib
 import requests
+import re
 from bs4 import BeautifulSoup
 
 
@@ -197,11 +198,12 @@ class Spider():
             for td in tds:
                 div = td.find('div')
                 if div != None and div.get_text().strip() != "":
-                    tmp = between(str(div), '>', '</div>').split('<font')
+                    tmp = re.findall(r'<div .*?>(.*?)</div>', str(div), re.S|re.M)[0].split('<br/>')
                     if len(tmp) != 1:
                         date = base + delta * ((zc - 1) * 7 + col - 1)
-                        classname = between('#' + tmp[0], '#', '<br/>')
-                        location = between(tmp[2], '>', '<')
+                        classname = tmp[0]
+                        if (tmp[2] != ''):
+                            location = re.findall(r'<font .*?>(.*?)</font>', tmp[2], re.S|re.M)[0]
                         res += self.event(date.strftime('%Y%m%d'), classname,
                                           self.time[row - 1][0], self.time[row - 1][1], location) + "\n"
                 col = col + 1
