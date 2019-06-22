@@ -37,18 +37,20 @@ class TCPhandler(socketserver.BaseRequestHandler):
             if action == 'trans':
                 try:
                     JSESSIONID = JSON['JSESSIONID']
-                    WEEK = JSON['week']
+                    WEEK_START = JSON['week_start']
+                    WEEK_END = JSON['week_end']
                     SEMESTER = JSON['semester']
                     SEMESTER_BASE = JSON['semester_base']
                 except KeyError:
                     res['code'], res['msg'] = -2, 'missing params'
                 else:
                     try:
-                        week = int(WEEK)
+                        week_start = int(WEEK_START)
+                        week_end = int(WEEK_END)+1
                     except ValueError:
                         res['code'], res['msg'] = -3, 'value error'
                     else:
-                        res['code'], res['msg'] = spider.trans(JSESSIONID, week, SEMESTER, SEMESTER_BASE)
+                        res['code'], res['msg'] = spider.trans(JSESSIONID, week_start, week_end, SEMESTER, SEMESTER_BASE)
         self.request.sendall(json.dumps(res).encode())
 
 
