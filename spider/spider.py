@@ -136,7 +136,7 @@ class Spider():
         """
         session = requests.Session()
         html = session.get(
-            'https://cas.sustc.edu.cn/cas/login?service=http://jwxt.sustc.edu.cn/jsxsd/').content
+            'https://cas.sustech.edu.cn/cas/login?service=http://jwxt.sustech.edu.cn/jsxsd/').content
         soup = BeautifulSoup(html, 'lxml')
         form = soup.find('form', id='fm1')
 
@@ -150,7 +150,7 @@ class Spider():
             "geolocation": "",
             "execution": execution
         }
-        session.post('https://cas.sustc.edu.cn/cas/login?service=http://jwxt.sustc.edu.cn/jsxsd/framework/xsMain.jsp',
+        session.post('https://cas.sustech.edu.cn/cas/login?service=http://jwxt.sustech.edu.cn/jsxsd/framework/xsMain.jsp',
                      data=params)
 
         try:
@@ -184,7 +184,7 @@ class Spider():
             'JSESSIONID': JSESSIONID
         }
         html = requests.post(
-            'http://jwxt.sustc.edu.cn/jsxsd/xskb/xskb_list.do', data=params, cookies=cookies).text
+            'http://jwxt.sustech.edu.cn/jsxsd/xskb/xskb_list.do', data=params, cookies=cookies).text
         soup = BeautifulSoup(html, "lxml")
         trs = soup.find_all(name='tr')
         if len(trs) <= 1:
