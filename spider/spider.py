@@ -67,7 +67,7 @@ def save(filename, string):
         string -- abspath of the file
     """
 
-    relative_path = os.path.join(os.getcwd(), 'ics', filename + ".ics")
+    relative_path = os.path.join(os.getcwd(), filename + ".ics")
     f = open(relative_path, 'wb')
     f.write(string.encode())
     f.close()
@@ -136,7 +136,7 @@ class Spider():
         """
         session = requests.Session()
         html = session.get(
-            'https://cas.sustc.edu.cn/cas/login?service=http://jwxt.sustc.edu.cn/jsxsd/').content
+            'https://cas.sustech.edu.cn/cas/login?service=http://jwxt.sustech.edu.cn/jsxsd/').content
         soup = BeautifulSoup(html, 'lxml')
         form = soup.find('form', id='fm1')
 
@@ -150,7 +150,7 @@ class Spider():
             "geolocation": "",
             "execution": execution
         }
-        session.post('https://cas.sustc.edu.cn/cas/login?service=http://jwxt.sustc.edu.cn/jsxsd/framework/xsMain.jsp',
+        session.post('https://cas.sustech.edu.cn/cas/login?service=http://jwxt.sustech.edu.cn/jsxsd/framework/xsMain.jsp',
                      data=params)
 
         try:
@@ -159,7 +159,7 @@ class Spider():
             return -1, 'login failed'
         return 0, res
 
-    def trans(self, JSESSIONID, week):
+    def trans(self, JSESSIONID, week_start, week_end, SEMESTER, semester_base):
         """Spider the content on teaching system and transform it to ics file
 
         Arguments:
@@ -171,46 +171,50 @@ class Spider():
         """
 
         base = datetime.datetime.strptime(
-            '2018-02-26 12:00:00', '%Y-%m-%d %H:%M:%S')
+            semester_base, '%Y-%m-%d %H:%M:%S')
         delta = datetime.timedelta(days=1)
-
-        zc = week
-        params = {
-            "sfFD": 1,
-            "xnxq01id": '2017-2018-2',
-            "zc": zc
-        }
-        cookies = {
-            'JSESSIONID': JSESSIONID
-        }
-        html = requests.post(
-            'http://jwxt.sustc.edu.cn/jsxsd/xskb/xskb_list.do', data=params, cookies=cookies).text
-        soup = BeautifulSoup(html, "lxml")
-        trs = soup.find_all(name='tr')
-        if len(trs) <= 1:
-            return -3, 'invalid jsessionid'
-        
-        row, col = 1, 0
         res = ""
-        for tr in trs:
-            soup = BeautifulSoup(str(tr), "lxml")
-            tds = soup.find_all(name='td')
-            for td in tds:
-                div = td.find('div')
-                if div != None and div.get_text().strip() != "":
-                    tmp = re.findall(r'<div .*?>(.*?)</div>', str(div), re.S|re.M)[0].split('<br/>')
-                    if len(tmp) != 1:
-                        date = base + delta * ((zc - 1) * 7 + col - 1)
-                        classname = tmp[0]
-                        if (tmp[2] != ''):
-                            location = re.findall(r'<font .*?>(.*?)</font>', tmp[2], re.S|re.M)[0]
-                        res += self.event(date.strftime('%Y%m%d'), classname,
-                                          self.time[row - 1][0], self.time[row - 1][1], location) + "\n"
-                col = col + 1
-                if col == 8:
-                    col = 1
-                    row = row + 1
-        return 0, save(JSESSIONID, self.calendar_model % res)
+
+        filename = 'Week{0}-{1}-of-{2}'.format(week_start,week_end-1,JSESSIONID[:6])
+
+        for week in range(week_start,week_end):
+            print("Fetching Week",week)
+            zc = week
+            params = {
+                "sfFD": 1,
+                "xnxq01id": SEMESTER,
+                "zc": zc
+            }
+            cookies = {
+                'JSESSIONID': JSESSIONID
+            }
+            html = requests.post(
+                'http://jwxt.sustech.edu.cn/jsxsd/xskb/xskb_list.do', data=params, cookies=cookies).text
+            soup = BeautifulSoup(html, "lxml")
+            trs = soup.find_all(name='tr')
+            if len(trs) <= 1:
+                return -3, 'invalid jsessionid'
+            
+            row, col = 1, 0
+            for tr in trs:
+                soup = BeautifulSoup(str(tr), "lxml")
+                tds = soup.find_all(name='td')
+                for td in tds:
+                    div = td.find('div')
+                    if div != None and div.get_text().strip() != "":
+                        tmp = re.findall(r'<div .*?>(.*?)</div>', str(div), re.S|re.M)[0].split('<br/>')
+                        if len(tmp) != 1:
+                            date = base + delta * ((zc - 1) * 7 + col - 1)
+                            classname = tmp[0]
+                            if (tmp[2] != ''):
+                                location = re.findall(r'<font .*?>(.*?)</font>', tmp[2], re.S|re.M)[0]
+                            res += self.event(date.strftime('%Y%m%d'), classname,
+                                            self.time[row - 1][0], self.time[row - 1][1], location) + "\n"
+                    col = col + 1
+                    if col == 8:
+                        col = 1
+                        row = row + 1
+        return 0, save(filename, self.calendar_model % res)
 
     def event(self, date, className, startTime, endTime, location):
         """Return a string describing a lesson's information in ics format
