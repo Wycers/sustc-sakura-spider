@@ -11,6 +11,8 @@ welcome_message = """sustc-sakura-spider / Course2iCal
 Created by Wycers & Nekonull
 We don't store your CAS information."""
 
+base_time = " 12:00:00"
+
 print(welcome_message)
 
 print("using server @",host,":",port,"\n")
@@ -21,10 +23,16 @@ sid = input("Enter Student ID: ")
 pwd = getpass("Enter CAS Password: ")
 s.sendall(json.dumps({'action': 'login', 'username': sid, 'password': pwd}).encode())
 JSESSIONID = json.loads(s.recv(1024).decode())['msg']
-print("\nLogin success! JSESSIONID=",JSESSIONID)
+print("Login success! JSESSIONID=",JSESSIONID,"\n")
 s.close()
+
+semester = input("Enter Semester (e.g. 2018-2019-2): ")
+semester_base = input("Enter Semester Start Date (First Monday, e.g. 2019-02-18): ")
+semester_base = semester_base + base_time
+week_start = input("Enter Start Week: ")
+week_end = input("Enter End Week: ")
 
 s2 = socket.socket()
 s2.connect((host, port))
-s2.sendall(json.dumps({'action': 'trans', 'JSESSIONID': JSESSIONID, 'semester':'2018-2019-2','semester_base':'2019-02-18 12:00:00','week':1}).encode())
+s2.sendall(json.dumps({'action': 'trans', 'JSESSIONID': JSESSIONID, 'semester':semester,'semester_base':semester_base,'week':week_start}).encode())
 print(s2.recv(1024).decode())
