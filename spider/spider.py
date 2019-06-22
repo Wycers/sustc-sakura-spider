@@ -159,7 +159,7 @@ class Spider():
             return -1, 'login failed'
         return 0, res
 
-    def trans(self, JSESSIONID, week, SEMESTER):
+    def trans(self, JSESSIONID, week, SEMESTER, semester_base):
         """Spider the content on teaching system and transform it to ics file
 
         Arguments:
@@ -171,7 +171,7 @@ class Spider():
         """
 
         base = datetime.datetime.strptime(
-            '2018-02-26 12:00:00', '%Y-%m-%d %H:%M:%S')
+            semester_base, '%Y-%m-%d %H:%M:%S')
         delta = datetime.timedelta(days=1)
 
         zc = week
