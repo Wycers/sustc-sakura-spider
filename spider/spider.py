@@ -67,7 +67,7 @@ def save(filename, string):
         string -- abspath of the file
     """
 
-    relative_path = os.path.join(os.getcwd(), 'ics', filename + ".ics")
+    relative_path = os.path.join(os.getcwd(), filename + ".ics")
     f = open(relative_path, 'wb')
     f.write(string.encode())
     f.close()
