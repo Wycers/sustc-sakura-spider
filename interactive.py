@@ -21,9 +21,9 @@ s = socket.socket()
 s.connect((host, port))
 sid = input("Enter Student ID: ")
 pwd = getpass("Enter CAS Password: (Your input is hidden, Press [ENTER] after finish.)")
+print("Trying to login... This shouldn't take too long...")
 s.sendall(json.dumps({'action': 'login', 'username': sid, 'password': pwd}).encode())
 JSESSIONID = json.loads(s.recv(1024).decode())['msg']
-print("Trying to login...")
 print("Login Result: JSESSIONID=",JSESSIONID,"\n")
 s.close()
 
@@ -31,7 +31,7 @@ semester = input("Enter Semester (e.g. 2018-2019-2): ")
 semester_base = input("Enter Semester Start Date (First Monday, e.g. 2019-02-18): ")
 semester_base = semester_base + base_time
 week_start = input("Enter Start Week: ")
-week_end = input("Enter End Week: (Including)")
+week_end = input("Enter End Week (Including): ")
 
 s2 = socket.socket()
 s2.connect((host, port))

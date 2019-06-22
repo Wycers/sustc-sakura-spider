@@ -175,7 +175,7 @@ class Spider():
         delta = datetime.timedelta(days=1)
         res = ""
 
-        filename = 'Week{0}-{1}-of-{2}'.format(week_start,week_end,JSESSIONID[:6])
+        filename = 'Week{0}-{1}-of-{2}'.format(week_start,week_end-1,JSESSIONID[:6])
 
         for week in range(week_start,week_end):
             print("Fetching Week",week)
