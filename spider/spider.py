@@ -175,7 +175,10 @@ class Spider():
         delta = datetime.timedelta(days=1)
         res = ""
 
+        filename = 'Week{0}-{1}-of-{2}'.format(week_start,week_end,JSESSIONID[:6])
+
         for week in range(week_start,week_end):
+            print("Fetching Week",week)
             zc = week
             params = {
                 "sfFD": 1,
@@ -211,7 +214,7 @@ class Spider():
                     if col == 8:
                         col = 1
                         row = row + 1
-        return 0, save(JSESSIONID, self.calendar_model % res)
+        return 0, save(filename, self.calendar_model % res)
 
     def event(self, date, className, startTime, endTime, location):
         """Return a string describing a lesson's information in ics format
