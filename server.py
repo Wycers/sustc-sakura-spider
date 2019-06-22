@@ -58,4 +58,5 @@ spider = Spider('./spider')
 host = '127.0.0.1'
 port = 9090
 server = socketserver.ThreadingTCPServer((host, port), TCPhandler)
+print("Server started listening @",host,":",port)
 server.serve_forever()
