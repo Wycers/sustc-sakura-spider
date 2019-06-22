@@ -159,7 +159,7 @@ class Spider():
             return -1, 'login failed'
         return 0, res
 
-    def trans(self, JSESSIONID, week):
+    def trans(self, JSESSIONID, week, SEMESTER):
         """Spider the content on teaching system and transform it to ics file
 
         Arguments:
@@ -177,7 +177,7 @@ class Spider():
         zc = week
         params = {
             "sfFD": 1,
-            "xnxq01id": '2017-2018-2',
+            "xnxq01id": SEMESTER,
             "zc": zc
         }
         cookies = {

@@ -15,5 +15,5 @@ s.close()
 
 s2 = socket.socket()
 s2.connect((host, port))
-s2.sendall(json.dumps({'action': 'trans', 'JSESSIONID': JSESSIONID, 'week':1}).encode())
+s2.sendall(json.dumps({'action': 'trans', 'JSESSIONID': JSESSIONID, 'semester':'2018-2019-2','week':1}).encode())
 print(s2.recv(1024).decode())
