@@ -196,7 +196,7 @@ class Spider():
                 return -3, 'invalid jsessionid'
             
             row, col = 1, 0
-            # location = ""
+            location = ""
             for tr in trs:
                 soup = BeautifulSoup(str(tr), "lxml")
                 tds = soup.find_all(name='td')
@@ -205,12 +205,10 @@ class Spider():
                     if div != None and div.get_text().strip() != "":
                         tmp = re.findall(r'<div .*?>(.*?)</div>', str(div), re.S|re.M)[0].split('<br/>')
                         if len(tmp) != 1:
-                            print(tmp)
                             date = base + delta * ((zc - 1) * 7 + col - 1)
                             classname = tmp[0]
                             if (tmp[2] != ''):
                                 location = re.findall(r'<font .*?>(.*?)</font>', tmp[2], re.S|re.M)[0]
-                            print('location' in locals())
                             res += self.event(date.strftime('%Y%m%d'), classname,
                                             self.time[row - 1][0], self.time[row - 1][1], location) + "\n"
                     col = col + 1
