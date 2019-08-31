@@ -1,10 +1,11 @@
 # sustc-sakura-spider
 ## Requirements
-- os
-- random
-- datetime
+
+- Python 3.6+
 - requests
 - bs4
+- lxml
+
 ## Application
 
 - 爬取南科大教务系统的课程表信息并转存为ics文件。
@@ -12,8 +13,8 @@
 
 ## Usage
 
-* 先在根目录执行 `python3 server.py`，看到 `Server started listening` 后**不要**关闭窗口
-
+- 开始前，执行 `pip install -r requirements.txt` 安装依赖
+- 先在根目录执行 `python3 server.py`，看到 `Server started listening` 后**不要**关闭窗口
 - 再在根目录执行 ```python3 interactive.py```
 - 根据提示输入学号、密码、学期、学期起始日、开始周、结束周
 - 运行完成后会在根目录下生成 `WeekXX-XX-of-XXXXXX.ics`
@@ -22,9 +23,19 @@
 * 如果想自动化此过程，可查看 `client.py` 了解详细请求逻辑
 * 建议先试试单独取一周课表，确认无误后再尝试导入整个学期
 * 对于某些奇怪的学期（例如国庆放假导致的某个教学周被跳过），需要分开两次生成，并对前后两段选取不同的学期起始日
-* 执行过多可能导致 IP 被临时封禁，换 IP / 换电脑 / 等待10min 即可解封
+* 执行过多可能导致 IP 被临时封禁，换 IP / 换电脑 / 等待 ~10 min 即可解封
 
-## Change log
+## Changelog
+
+### v0.2.1 (2019-09-01 03:47:00 GMT+08:00)
+
+> By nekonull (@jerrylususu)
+
+* `README.MD` 补全
+* 增加 `requirements.txt`
+* 界面完善：登陆失败直接退出
+* 界面完善：更新示例数据至 2019-2020-1 学期
+* Bug 修复：无教室位置的课程会导致程序崩溃 
 
 ### v0.2.0 (2019-06-22 22:23:00 GMT+08:00)
 
