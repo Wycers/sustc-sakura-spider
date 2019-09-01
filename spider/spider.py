@@ -196,6 +196,7 @@ class Spider():
                 return -3, 'invalid jsessionid'
             
             row, col = 1, 0
+            location = ""
             for tr in trs:
                 soup = BeautifulSoup(str(tr), "lxml")
                 tds = soup.find_all(name='td')

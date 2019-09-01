@@ -4,6 +4,7 @@
 import socket
 import json
 from getpass import getpass
+import sys
 host = '127.0.0.1'
 port = 9090
 
@@ -27,8 +28,12 @@ JSESSIONID = json.loads(s.recv(1024).decode())['msg']
 print("Login Result: JSESSIONID=",JSESSIONID,"\n")
 s.close()
 
-semester = input("Enter Semester (e.g. 2018-2019-2): ")
-semester_base = input("Enter Semester Start Date (First Monday, e.g. 2019-02-18): ")
+
+if("login failed" in JSESSIONID):
+    sys.exit("[ERROR] Login failed. Terminating...")
+
+semester = input("Enter Semester (e.g. 2019-2020-1): ")
+semester_base = input("Enter Semester Start Date (First Monday, e.g. 2019-09-02): ")
 semester_base = semester_base + base_time
 week_start = input("Enter Start Week: ")
 week_end = input("Enter End Week (Including): ")
