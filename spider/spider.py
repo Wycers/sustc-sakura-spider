@@ -2,17 +2,18 @@
 
 """
 
-import os
-import os.path
-from random import Random
 import datetime
 import hashlib
-import requests
+import os
+import os.path
 import re
+from random import Random
+
+import requests
 from bs4 import BeautifulSoup
 
 
-def getMD5(string):
+def get_md5(string):
     """get a string's md5 code
 
     Arguments:
@@ -24,7 +25,7 @@ def getMD5(string):
     return hashlib.md5(string.encode('utf-8')).hexdigest()
 
 
-def MakeString(length):
+def make_string(length):
     """Create a unique string with specific length
 
     Arguments:
@@ -37,7 +38,7 @@ def MakeString(length):
     return random_str(length) + "&Wycer"
 
 
-def random_str(randomlength):
+def random_str(random_length):
     """create a random string
 
     Arguments:
@@ -51,7 +52,7 @@ def random_str(randomlength):
     chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789'
     length = len(chars) - 1
     random = Random()
-    for i in range(randomlength):
+    for i in range(random_length):
         res += chars[random.randint(0, length)]
     return res
 
@@ -95,7 +96,7 @@ def between(string, tag1, tag2):
     return string[index1:index2]
 
 
-class Spider():
+class Spider:
     """A spider class
 
     Methods:
@@ -136,7 +137,7 @@ class Spider():
         """
         session = requests.Session()
         html = session.get(
-            'https://cas.sustech.edu.cn/cas/login?service=http://jwxt.sustech.edu.cn/jsxsd/').content
+            'https://cas.sustech.edu.cn/cas/login?service=https://jwxt.sustech.edu.cn/jsxsd/').content
         soup = BeautifulSoup(html, 'lxml')
         form = soup.find('form', id='fm1')
 
@@ -150,8 +151,10 @@ class Spider():
             "geolocation": "",
             "execution": execution
         }
-        session.post('https://cas.sustech.edu.cn/cas/login?service=http://jwxt.sustech.edu.cn/jsxsd/framework/xsMain.jsp',
-                     data=params)
+        res = session.post(
+            'https://cas.sustech.edu.cn/cas/login?service=https://jwxt.sustech.edu.cn/jsxsd/framework/xsMain.jsp',
+            data=params)
+        print(res.content.decode())
 
         try:
             res = session.cookies['JSESSIONID']
@@ -175,10 +178,10 @@ class Spider():
         delta = datetime.timedelta(days=1)
         res = ""
 
-        filename = 'Week{0}-{1}-of-{2}'.format(week_start,week_end-1,JSESSIONID[:6])
+        filename = 'Week{0}-{1}-of-{2}'.format(week_start, week_end - 1, JSESSIONID[:6])
 
-        for week in range(week_start,week_end):
-            print("Fetching Week",week)
+        for week in range(week_start, week_end):
+            print("Fetching Week", week)
             zc = week
             params = {
                 "sfFD": 1,
@@ -189,12 +192,12 @@ class Spider():
                 'JSESSIONID': JSESSIONID
             }
             html = requests.post(
-                'http://jwxt.sustech.edu.cn/jsxsd/xskb/xskb_list.do', data=params, cookies=cookies).text
+                'https://jwxt.sustech.edu.cn/jsxsd/xskb/xskb_list.do', data=params, cookies=cookies).text
             soup = BeautifulSoup(html, "lxml")
             trs = soup.find_all(name='tr')
             if len(trs) <= 1:
                 return -3, 'invalid jsessionid'
-            
+
             row, col = 1, 0
             location = ""
             for tr in trs:
@@ -202,15 +205,15 @@ class Spider():
                 tds = soup.find_all(name='td')
                 for td in tds:
                     div = td.find('div')
-                    if div != None and div.get_text().strip() != "":
-                        tmp = re.findall(r'<div .*?>(.*?)</div>', str(div), re.S|re.M)[0].split('<br/>')
+                    if div is not None and div.get_text().strip() != "":
+                        tmp = re.findall(r'<div .*?>(.*?)</div>', str(div), re.S | re.M)[0].split('<br/>')
                         if len(tmp) != 1:
                             date = base + delta * ((zc - 1) * 7 + col - 1)
                             classname = tmp[0]
-                            if (tmp[2] != ''):
-                                location = re.findall(r'<font .*?>(.*?)</font>', tmp[2], re.S|re.M)[0]
+                            if tmp[2] != '':
+                                location = re.findall(r'<font .*?>(.*?)</font>', tmp[2], re.S | re.M)[0]
                             res += self.event(date.strftime('%Y%m%d'), classname,
-                                            self.time[row - 1][0], self.time[row - 1][1], location) + "\n"
+                                              self.time[row - 1][0], self.time[row - 1][1], location) + "\n"
                     col = col + 1
                     if col == 8:
                         col = 1
@@ -232,10 +235,10 @@ class Spider():
         """
 
         DONE_CreatedTime = datetime.datetime.now().strftime("%Y%m%dT%H%M%S") + "Z"
-        DONE_ALARMUID = MakeString(30)
-        DONE_UnitUID = MakeString(20)
+        DONE_ALARMUID = make_string(30)
+        DONE_UnitUID = make_string(20)
         DONE_reminder = self.reminderList[1]
-        return self.event_model % (DONE_CreatedTime, MakeString(20),
+        return self.event_model % (DONE_CreatedTime, make_string(20),
                                    date + "T" + endTime + "00", className,
                                    date + "T" + startTime + "00", DONE_CreatedTime, location,
                                    DONE_ALARMUID, DONE_UnitUID, DONE_reminder)

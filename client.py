@@ -3,6 +3,7 @@
 
 import socket
 import json
+
 host = '127.0.0.1'
 port = 9090
 
@@ -15,5 +16,13 @@ s.close()
 
 s2 = socket.socket()
 s2.connect((host, port))
-s2.sendall(json.dumps({'action': 'trans', 'JSESSIONID': JSESSIONID, 'semester':'2018-2019-2','semester_base':'2019-02-18 12:00:00','week_start':1,'week_end':11}).encode())
+s2.sendall(json.dumps(
+    {
+        'action': 'trans',
+        'JSESSIONID': JSESSIONID,
+        'semester': '2018-2019-2',
+        'semester_base': '2019-02-18 12:00:00',
+        'week_start': 1, 'week_end': 11
+    }).encode()
+)
 print(s2.recv(1024).decode())
